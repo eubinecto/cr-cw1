@@ -58,8 +58,9 @@ sequentially defining the model architecture:
 
 
 
-
 SO, what we'll be testing for is...
-- 1 conv layer, 2 conv layer, 3 conv layer and 4 conv layer.
+- the number of convolution layers. 1 conv layer, 2 conv layer, 3 conv layer and 4 conv layer.
   - just train them, save the models somewhere, and evaluate them with another script.
+- with & without batch norm.
+- early stopping. pick the best one, 
   
