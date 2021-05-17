@@ -104,7 +104,7 @@ lost if report longer than the required maximum of 5 pages.
 ### optimising epochs
 
 
-(a figure showing when this should be stopped.)
+(a figure showing when epoch should be stopped.)
 
 early stopping - we could do this.. right? Just do this by hand... and as for the other parts..
 - cite early stopping? (Hands-on ML with tensorflow)
@@ -112,14 +112,39 @@ early stopping - we could do this.. right? Just do this by hand... and as for th
 
 ### optimising the number of convolution layers
 
-one | two | three
--- | --- | ---
-... | ... | ...
+
+BaseCNN | TwoCNN | ThreeCNN
+--- | --- | ---
+62% | 66% | 62 %  
+
+model | accuracy | final training loss (cross entropy)
+--- | --- | ---
+BaseCNN | 62% | 0.955 
+TwoCNN |  66% | 0.868
+ThreeCNN | 62% | 0.997
+
+
+Table: epoch = determined with early stopping (one=3, two=). . 
+
+**CNN with two convolution layers seem to be **
+- but why? : Two CNN ended with the final training loss of 
+
 
 
 
 ### Regularizing the models with batch-norm and dropout layers.
 
+
+
+RegBaseCNN | RegTwoCNN | RegThreeCNN
+--- | --- | ---
+... | ... | ...
+
+**We regularise the model by inserting batch norm and drop out layers to each conv layer.**
+- cite batch norm:
+- cite dropout: 
+
+**We optimise the 
 
 ---
 

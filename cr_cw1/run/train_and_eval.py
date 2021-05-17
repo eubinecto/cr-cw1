@@ -21,6 +21,8 @@ def main():
                         default="base_cnn")
     parser.add_argument("--lr", type=float,
                         default=1e-3)
+    parser.add_argument("--patience", type=int,
+                        default=5)
 
     # --- get the hyper parameters --- #
     args = parser.parse_args()
@@ -28,6 +30,7 @@ def main():
     epoch: int = args.epoch
     model_name: str = args.model_name
     lr: float = args.lr
+    patience: int = args.patience
 
     # --- instantiate the model --- #
     if model_name == "base_cnn":
@@ -83,7 +86,7 @@ def main():
     early_stopping = EarlyStopping(
         monitor='val_loss',
         min_delta=0.00,
-        patience=3,
+        patience=patience,
         verbose=True,  # so that I can plot the trend.
         mode='max'
     )
