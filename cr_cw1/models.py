@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import pytorch_lightning as pl
 
 
-class Model(pl.LightningModule):
+class CNN(pl.LightningModule):
     """
     the training step is defined here.
     """
@@ -16,6 +16,10 @@ class Model(pl.LightningModule):
     def __init__(self, lr: float, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.lr = lr
+
+    def forward(self, *args, **kwargs) -> torch.Tensor:
+        # should be implemented by subclasses
+        raise NotImplementedError
 
     def training_step(self, batch, batch_idx: int) -> torch.Tensor:
         """
@@ -45,7 +49,7 @@ class Model(pl.LightningModule):
         return optimizer
 
 
-class BaseCNN(Model):
+class BaseCNN(CNN):
     """
     the baseline CNN.
     Just a single Conv2d layer.
@@ -76,6 +80,9 @@ class BaseCNN(Model):
 
 
 class RegBaseCNN(BaseCNN):
+    """
+    the base CNN, but regularised with batch norm & dropout layers.
+    """
 
     def __init__(self, lr: float):
         super().__init__(lr)
@@ -91,7 +98,7 @@ class RegBaseCNN(BaseCNN):
         self.fc_1 = nn.Linear(in_features=32 * 15 * 15, out_features=10)  # should match.
 
 
-class TwoCNN(Model):
+class TwoCNN(CNN):
     """
     the baseline CNN.
     Just a single Conv2d layer.
@@ -148,7 +155,7 @@ class RegTwoCNN(TwoCNN):
         self.fc_1 = nn.Linear(in_features=32 * 6 * 6, out_features=10)  # should match.
 
 
-class ThreeCNN(Model):
+class ThreeCNN(CNN):
     """
     the baseline CNN.
     Just a single Conv2d layer.

@@ -14,11 +14,11 @@ def main():
     # parse the arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int,
-                        default=10)
+                        default=20)
     parser.add_argument("--epoch", type=int,
-                        default=2)
+                        default=1)
     parser.add_argument("--model_name", type=str,
-                        default="three_cnn")
+                        default="base_cnn")
     parser.add_argument("--lr", type=float,
                         default=1e-3)
 
@@ -64,6 +64,8 @@ def main():
     )
     train_set = torchvision.datasets.CIFAR10(root=CIFAR10_DIR, train=True,
                                              download=False, transform=transform)
+    test_set = torchvision.datasets.CIFAR10(root=CIFAR10_DIR, train=False,
+                                            download=False, transform=transform)  # to be used for eval
     # do the train / val split. (80 to 20)
     train_len = int(0.8 * len(train_set))
     val_len = len(train_set) - train_len
@@ -74,6 +76,8 @@ def main():
                               shuffle=False, num_workers=4)
     val_loader = DataLoader(val_set, batch_size=batch_size,
                             shuffle=False, num_workers=4)
+    test_loader = DataLoader(test_set, batch_size=batch_size,
+                             shuffle=False, num_workers=4)
 
     # --- instantiate early stopping --- #
     early_stopping = EarlyStopping(
@@ -93,13 +97,28 @@ def main():
                          log_every_n_steps=1,
                          default_root_dir=default_root_dir,
                          logger=tb_logger,
-                         # callbacks will do the early stopping for you.
-                         callbacks=[early_stopping])  # this connects to cuda somehow?
+                         # this will do the early stopping for you.
+                         callbacks=[early_stopping])
 
     # --- start training --- #
     trainer.fit(model=model,
                 train_dataloader=train_loader,
                 val_dataloaders=val_loader)
+
+    # --- evaluate the accuracy of the model --- #
+    total = 0
+    correct = 0
+    model.eval()  # first, put it into eval mode.
+    with torch.no_grad():  # no need for calculating the gradients
+        for data in test_loader:
+            x, y = data
+            y_hat = model.forward(x)
+            _, predicted = torch.max(y_hat.data, dim=1)
+            total += y.size(0)
+            correct += (predicted == y).sum().item()
+
+    print('Accuracy of the network on the 10000 test images: %d %%' % (
+            100 * correct / total))
 
 
 if __name__ == '__main__':
