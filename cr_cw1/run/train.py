@@ -18,7 +18,7 @@ def main():
     parser.add_argument("--epoch", type=int,
                         default=2)
     parser.add_argument("--model_name", type=str,
-                        default="base_cnn")
+                        default="three_cnn")
     parser.add_argument("--lr", type=float,
                         default=1e-3)
 

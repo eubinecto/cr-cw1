@@ -56,11 +56,11 @@ class BaseCNN(Model):
         # input channel 3 = the R, G and B channels.
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=3, out_channels=12, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=3, out_channels=40, kernel_size=(3, 3)),
             torch.nn.ReLU(),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
-        self.fc_1 = nn.Linear(in_features=12 * 15 * 15, out_features=10)  # should match.
+        self.fc_1 = nn.Linear(in_features=40 * 15 * 15, out_features=10)  # should match.
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -68,6 +68,7 @@ class BaseCNN(Model):
         out: a 1d logit vector. 10 logits.
         """
         out = self.layer_1(x)
+        print("****{}****".format(out.shape))
         out = out.view(out.size(0), -1)  # flatten for the fully connected layer
         out = self.fc_1(out)
         return out
@@ -86,16 +87,16 @@ class TwoCNN(Model):
         # input channel 3 = the R, G and B channels.
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=3, out_channels=12, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=3, out_channels=40, kernel_size=(3, 3)),
             torch.nn.ReLU(),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_2 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=6, out_channels=6, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=40, out_channels=20, kernel_size=(3, 3)),
             torch.nn.ReLU(),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
-        self.fc_1 = nn.Linear(in_features=6 * 15 * 15, out_features=10)  # should match.
+        self.fc_1 = nn.Linear(in_features=20 * 6 * 6, out_features=10)  # should match.
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -104,6 +105,7 @@ class TwoCNN(Model):
         """
         out = self.layer_1(x)
         out = self.layer_2(out)
+        print("****{}****".format(out.shape))
         out = out.view(out.size(0), -1)  # flatten for the fully connected layer
         out = self.fc_1(out)
         return out
@@ -120,21 +122,21 @@ class ThreeCNN(Model):
         # input channel 3 = the R, G and B channels.
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=3, out_channels=6, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=3, out_channels=40, kernel_size=(3, 3)),
             torch.nn.ReLU(),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_2 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=3, out_channels=6, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=40, out_channels=20, kernel_size=(3, 3)),
             torch.nn.ReLU(),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_3 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=6, out_channels=3, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=20, out_channels=10, kernel_size=(3, 3)),
             torch.nn.ReLU(),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
-        self.fc_1 = nn.Linear(in_features=3 * 15 * 15, out_features=10)  # should match.
+        self.fc_1 = nn.Linear(in_features=10 * 2 * 2, out_features=10)  # should match.
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -144,6 +146,7 @@ class ThreeCNN(Model):
         out = self.layer_1(x)
         out = self.layer_2(out)
         out = self.layer_3(out)
+        print("****{}****".format(out.shape))
         out = out.view(out.size(0), -1)  # flatten for the fully connected layer
         out = self.fc_1(out)
         return out
