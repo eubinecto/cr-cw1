@@ -57,7 +57,7 @@ class BaseCNN(Model):
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
             torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.ReLU(),  # non-linear activation
+            torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.fc_1 = nn.Linear(in_features=32 * 15 * 15, out_features=10)  # should match.
@@ -75,6 +75,22 @@ class BaseCNN(Model):
 # what we should first do, is optimising the epoch with the base CNN. That's the first thing you must optimise, alright?
 
 
+class RegBaseCNN(BaseCNN):
+
+    def __init__(self, lr: float):
+        super().__init__(lr)
+        # input channel 3 = the R, G and B channels.
+        # change this with a sequential layer.
+        self.layer_1 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
+            nn.BatchNorm2d(32),
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout2d(p=0.05)
+        )  # sequentially define the layer.
+        self.fc_1 = nn.Linear(in_features=32 * 15 * 15, out_features=10)  # should match.
+
+
 class TwoCNN(Model):
     """
     the baseline CNN.
@@ -87,12 +103,12 @@ class TwoCNN(Model):
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
             torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.ReLU(),  # non-linear activation
+            torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_2 = nn.Sequential(
             torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.ReLU(),  # non-linear activation
+            torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.fc_1 = nn.Linear(in_features=32 * 6 * 6, out_features=10)  # should match.
@@ -109,6 +125,29 @@ class TwoCNN(Model):
         return out
 
 
+class RegTwoCNN(TwoCNN):
+
+    def __init__(self, lr: float):
+        super().__init__(lr)
+        # input channel 3 = the R, G and B channels.
+        # change this with a sequential layer.
+        self.layer_1 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
+            torch.nn.BatchNorm2d(32),
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout2d(p=0.05)
+        )  # sequentially define the layer.
+        self.layer_2 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
+            torch.nn.BatchNorm2d(32),
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout2d(p=0.05)
+        )  # sequentially define the layer.
+        self.fc_1 = nn.Linear(in_features=32 * 6 * 6, out_features=10)  # should match.
+
+
 class ThreeCNN(Model):
     """
     the baseline CNN.
@@ -121,17 +160,17 @@ class ThreeCNN(Model):
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
             torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.ReLU(),  # non-linear activation
+            torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_2 = nn.Sequential(
             torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.ReLU(),  # non-linear activation
+            torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_3 = nn.Sequential(
             torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.ReLU(),  # non-linear activation
+            torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.fc_1 = nn.Linear(in_features=32 * 2 * 2, out_features=10)  # should match.
@@ -148,3 +187,36 @@ class ThreeCNN(Model):
         out = self.fc_1(out)
         return out
 
+
+class RegThreeCNN(ThreeCNN):
+    """
+    the baseline CNN.
+    Just a single Conv2d layer.
+    One fully connected layer.
+    """
+    def __init__(self, lr: float):
+        super(RegThreeCNN, self).__init__(lr)
+        # input channel 3 = the R, G and B channels.
+        # change this with a sequential layer.
+        self.layer_1 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
+            torch.nn.BatchNorm2d(32),
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            torch.nn.Dropout2d(p=0.05)
+        )  # sequentially define the layer.
+        self.layer_2 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
+            nn.BatchNorm2d(32),
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            torch.nn.Dropout2d(p=0.05)
+        )  # sequentially define the layer.
+        self.layer_3 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
+            nn.BatchNorm2d(32),
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            torch.nn.Dropout2d(p=0.05)
+        )  # sequentially define the layer.
+        self.fc_1 = nn.Linear(in_features=32 * 2 * 2, out_features=10)  # should match.

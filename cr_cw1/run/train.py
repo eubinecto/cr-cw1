@@ -5,7 +5,7 @@ from pytorch_lightning.callbacks import EarlyStopping
 from torch.utils.data import DataLoader, random_split
 from torchvision.transforms import transforms
 from cr_cw1.paths import *
-from cr_cw1.models import BaseCNN, TwoCNN, ThreeCNN
+from cr_cw1.models import BaseCNN, TwoCNN, ThreeCNN, RegBaseCNN, RegTwoCNN, RegThreeCNN
 import pytorch_lightning as pl
 import pytorch_lightning.loggers as pl_loggers
 
@@ -14,7 +14,7 @@ def main():
     # parse the arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int,
-                        default=32)
+                        default=10)
     parser.add_argument("--epoch", type=int,
                         default=2)
     parser.add_argument("--model_name", type=str,
@@ -39,6 +39,15 @@ def main():
     elif model_name == "three_cnn":
         model = ThreeCNN(lr)
         default_root_dir = THREE_CNN_DIR
+    elif model_name == "reg_base_cnn":
+        model = RegBaseCNN(lr)
+        default_root_dir = REG_BASE_CNN_DIR
+    elif model_name == "reg_two_cnn":
+        model = RegTwoCNN(lr)
+        default_root_dir = REG_TWO_CNN_DIR
+    elif model_name == "reg_three_cnn":
+        model = RegThreeCNN(lr)
+        default_root_dir = REG_THREE_CNN_DIR
     else:
         raise ValueError("invalid model name:", model_name)
 

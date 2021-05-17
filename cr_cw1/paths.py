@@ -10,3 +10,6 @@ MODELS_DIR = path.join(PROJECT_DATA_DIR, "models")  # this is where all the trai
 BASE_CNN_DIR = path.join(MODELS_DIR, 'base_cnn')  # the state_dict of the base model.
 TWO_CNN_DIR = path.join(MODELS_DIR, 'two_cnn')  # the state_dict of cnn with two conv layers.
 THREE_CNN_DIR = path.join(MODELS_DIR, 'three_cnn')
+REG_BASE_CNN_DIR = path.join(MODELS_DIR, 'reg_base_cnn')
+REG_TWO_CNN_DIR = path.join(MODELS_DIR, 'reg_two_cnn')
+REG_THREE_CNN_DIR = path.join(MODELS_DIR, 'reg_three_cnn')
