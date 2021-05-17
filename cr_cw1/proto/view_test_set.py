@@ -1,4 +1,5 @@
 import torchvision
+from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from cr_cw1.paths import CIFAR10_DIR
@@ -13,9 +14,8 @@ def main():
     test_set = torchvision.datasets.CIFAR10(root=CIFAR10_DIR, train=False,
                                             download=False, transform=transform)
 
-    for x, y in test_set:
-        print(x)
-        print(y)
+    test_loader = DataLoader(test_set, batch_size=10,
+                             shuffle=False, num_workers=4)
 
 
 if __name__ == '__main__':

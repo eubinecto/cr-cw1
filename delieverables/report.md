@@ -113,15 +113,11 @@ early stopping - we could do this.. right? Just do this by hand... and as for th
 ### optimising the number of convolution layers
 
 
-BaseCNN | TwoCNN | ThreeCNN
---- | --- | ---
-62% | 66% | 62 %  
-
-model | accuracy | final training loss (cross entropy)
---- | --- | ---
-BaseCNN | 62% | 0.955 
-TwoCNN |  66% | 0.868
-ThreeCNN | 62% | 0.997
+model | testing accuracy | final training loss (cross entropy)  
+--- | --- | --- | --- 
+BaseCNN | 62% | 0.795 
+TwoCNN |  66% | 0.866
+ThreeCNN | 65% | 0.966
 
 
 Table: epoch = determined with early stopping (one=3, two=). . 
@@ -131,14 +127,16 @@ Table: epoch = determined with early stopping (one=3, two=). .
 
 
 
-
 ### Regularizing the models with batch-norm and dropout layers.
 
 
 
 RegBaseCNN | RegTwoCNN | RegThreeCNN
+
+model | testing accuracy | final training loss (c)
+
 --- | --- | ---
-... | ... | ...
+60% | 67% | 
 
 **We regularise the model by inserting batch norm and drop out layers to each conv layer.**
 - cite batch norm:

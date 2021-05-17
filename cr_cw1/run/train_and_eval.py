@@ -10,6 +10,21 @@ import pytorch_lightning as pl
 import pytorch_lightning.loggers as pl_loggers
 
 
+def eval_acc(model: torch.nn.Module, data_loader: DataLoader) -> float:
+    total = 0
+    correct = 0
+    model.eval()  # first, put it into eval mode.
+    with torch.no_grad():  # no need for calculating the gradients
+        for data in data_loader:
+            x, y = data
+            y_hat = model.forward(x)
+            _, predicted = torch.max(y_hat.data, dim=1)
+            total += y.size(0)
+            correct += (predicted == y).sum().item()
+
+    return 100 * (correct / total)
+
+
 def main():
     # parse the arguments
     parser = argparse.ArgumentParser()
@@ -109,19 +124,11 @@ def main():
                 val_dataloaders=val_loader)
 
     # --- evaluate the accuracy of the model --- #
-    total = 0
-    correct = 0
-    model.eval()  # first, put it into eval mode.
-    with torch.no_grad():  # no need for calculating the gradients
-        for data in test_loader:
-            x, y = data
-            y_hat = model.forward(x)
-            _, predicted = torch.max(y_hat.data, dim=1)
-            total += y.size(0)
-            correct += (predicted == y).sum().item()
+    train_acc = eval_acc(model, train_loader)
+    test_acc = eval_acc(model, test_loader)
 
-    print('Accuracy of the network on the 10000 test images: %d %%' % (
-            100 * correct / total))
+    print('Accuracy of the network on the train images:', train_acc)
+    print('Accuracy of the network on the test images:', test_acc)
 
 
 if __name__ == '__main__':
