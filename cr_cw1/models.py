@@ -68,7 +68,6 @@ class BaseCNN(Model):
         out: a 1d logit vector. 10 logits.
         """
         out = self.layer_1(x)
-        print("****{}****".format(out.shape))
         out = out.view(out.size(0), -1)  # flatten for the fully connected layer
         out = self.fc_1(out)
         return out
@@ -105,7 +104,6 @@ class TwoCNN(Model):
         """
         out = self.layer_1(x)
         out = self.layer_2(out)
-        print("****{}****".format(out.shape))
         out = out.view(out.size(0), -1)  # flatten for the fully connected layer
         out = self.fc_1(out)
         return out
@@ -146,7 +144,6 @@ class ThreeCNN(Model):
         out = self.layer_1(x)
         out = self.layer_2(out)
         out = self.layer_3(out)
-        print("****{}****".format(out.shape))
         out = out.view(out.size(0), -1)  # flatten for the fully connected layer
         out = self.fc_1(out)
         return out
