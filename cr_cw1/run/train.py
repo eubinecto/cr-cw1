@@ -1,38 +1,49 @@
 import argparse
 import torch
 import torchvision
-from torch.utils.data import DataLoader
-from torchsample.modules import ModuleTrainer
+from pytorch_lightning.callbacks import EarlyStopping
+from torch.utils.data import DataLoader, random_split
 from torchvision.transforms import transforms
-from cr_cw1.paths import CIFAR10_DIR
-from cr_cw1.models import BaseCNN
+from cr_cw1.paths import *
+from cr_cw1.models import BaseCNN, TwoCNN, ThreeCNN
+import pytorch_lightning as pl
+import pytorch_lightning.loggers as pl_loggers
 
 
 def main():
     # parse the arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int,
-                        default=5)
+                        default=32)
     parser.add_argument("--epoch", type=int,
-                        default=10)
+                        default=2)
     parser.add_argument("--model_name", type=str,
-                        default="BaseCNN")
+                        default="base_cnn")
+    parser.add_argument("--lr", type=float,
+                        default=1e-3)
 
-    # parse the arguments
+    # --- get the hyper parameters --- #
     args = parser.parse_args()
     batch_size: int = args.batch_size
     epoch: int = args.epoch
     model_name: str = args.model_name
+    lr: float = args.lr
 
     # --- instantiate the model --- #
-    if model_name == "BaseCNN":
-        model = BaseCNN()
+    if model_name == "base_cnn":
+        model = BaseCNN(lr)
+        default_root_dir = BASE_CNN_DIR
+    elif model_name == "two_cnn":
+        model = TwoCNN(lr)
+        default_root_dir = TWO_CNN_DIR
+    elif model_name == "three_cnn":
+        model = ThreeCNN(lr)
+        default_root_dir = THREE_CNN_DIR
     else:
         raise ValueError("invalid model name:", model_name)
 
     # --- gpu set up --- #
     print("is cuda available?:", torch.cuda.is_available())
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # --- load the data --- #
     # The output of torchvision datasets are PILImage images of range [0, 1].
@@ -44,32 +55,42 @@ def main():
     )
     train_set = torchvision.datasets.CIFAR10(root=CIFAR10_DIR, train=True,
                                              download=False, transform=transform)
-    test_set = torchvision.datasets.CIFAR10(root=CIFAR10_DIR, train=False,
-                                            download=False, transform=transform)
+    # do the train / val split. (80 to 20)
+    train_len = int(0.8 * len(train_set))
+    val_len = len(train_set) - train_len
+    train_set, val_set = random_split(train_set, [train_len, val_len])
 
     # --- instantiate the loaders --- #
     train_loader = DataLoader(train_set, batch_size=batch_size,
-                              shuffle=True, num_workers=2)
-    test_loader = DataLoader(test_set, batch_size=batch_size,
-                              shuffle=True, num_workers=2)
-    # known issue: https://github.com/ncullen93/torchsample/issues/65#issuecomment-353924500
-    # here, I just register them as 1.
-    train_loader.dataset.num_inputs = 1
-    train_loader.dataset.num_targets = 1
-    test_loader.dataset.num_inputs = 1
-    test_loader.dataset.num_targets = 1
+                              shuffle=False, num_workers=4)
+    val_loader = DataLoader(val_set, batch_size=batch_size,
+                            shuffle=False, num_workers=4)
+
+    # --- instantiate early stopping --- #
+    early_stopping = EarlyStopping(
+        monitor='val_loss',
+        min_delta=0.00,
+        patience=3,
+        verbose=True,  # so that I can plot the trend.
+        mode='max'
+    )
+
+    # --- logger setup --- #
+    tb_logger = pl_loggers.CSVLogger(save_dir=default_root_dir)
 
     # --- instantiate the trainer --- #
-    trainer = ModuleTrainer(model)
-    trainer.compile(loss='nll_loss',
-                    optimizer='adadelta')
+    trainer = pl.Trainer(gpus=1 if torch.cuda.is_available() else None,
+                         max_epochs=epoch,
+                         log_every_n_steps=1,
+                         default_root_dir=default_root_dir,
+                         logger=tb_logger,
+                         # callbacks will do the early stopping for you.
+                         callbacks=[early_stopping])  # this connects to cuda somehow?
 
-    # --- fit the model --- #
-    trainer.fit_loader(loader=train_loader,
-                       val_loader=test_loader,
-                       num_epoch=epoch,
-                       cuda_device=1 if torch.cuda.is_available() else -1,
-                       verbose=1)
+    # --- start training --- #
+    trainer.fit(model=model,
+                train_dataloader=train_loader,
+                val_dataloaders=val_loader)
 
 
 if __name__ == '__main__':

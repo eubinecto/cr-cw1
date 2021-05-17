@@ -1,18 +1,58 @@
 """
-the model is from https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+the model architecture was adapted from: https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
 """
+from typing import Any
 import torch
-import torch.nn as nn
+from torch import nn
+import torch.nn.functional as F
+import pytorch_lightning as pl
 
 
-class BaseCNN(nn.Module):
+class Model(pl.LightningModule):
+    """
+    the training step is defined here.
+    """
+
+    def __init__(self, lr: float, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self.lr = lr
+
+    def training_step(self, batch, batch_idx: int) -> torch.Tensor:
+        """
+        training step defines the train loop.
+        """
+        x, y = batch
+        y_hat = self.forward(x)
+        # we compute the
+        loss = F.cross_entropy(y_hat, y)
+        self.log("train_loss:", loss)
+        return loss
+
+    def validation_step(self, batch, batch_idx: int):
+        """
+        validation step defines the validation loop.
+        # the batches will come from the validation dataset.
+        """
+        x, y = batch
+        y_hat = self.forward(x)
+        loss = F.cross_entropy(y_hat, y)
+        # log the validation loss
+        self.log("val_loss", loss)
+
+    def configure_optimizers(self):
+        # we use an adam optimizer for this model.
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+        return optimizer
+
+
+class BaseCNN(Model):
     """
     the baseline CNN.
     Just a single Conv2d layer.
     One fully connected layer.
     """
-    def __init__(self):
-        super(BaseCNN, self).__init__()
+    def __init__(self, lr: float):
+        super(BaseCNN, self).__init__(lr)
         # input channel 3 = the R, G and B channels.
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
@@ -35,14 +75,14 @@ class BaseCNN(nn.Module):
 # what we should first do, is optimising the epoch with the base CNN. That's the first thing you must optimise, alright?
 
 
-class TwoCNN(nn.Module):
+class TwoCNN(Model):
     """
     the baseline CNN.
     Just a single Conv2d layer.
     One fully connected layer.
     """
-    def __init__(self):
-        super(TwoCNN, self).__init__()
+    def __init__(self, lr: float):
+        super(TwoCNN, self).__init__(lr)
         # input channel 3 = the R, G and B channels.
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
@@ -69,14 +109,14 @@ class TwoCNN(nn.Module):
         return out
 
 
-class ThreeCNN(nn.Module):
+class ThreeCNN(Model):
     """
     the baseline CNN.
     Just a single Conv2d layer.
     One fully connected layer.
     """
-    def __init__(self):
-        super(ThreeCNN, self).__init__()
+    def __init__(self, lr: float):
+        super(ThreeCNN, self).__init__(lr)
         # input channel 3 = the R, G and B channels.
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
