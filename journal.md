@@ -64,3 +64,29 @@ SO, what we'll be testing for is...
 - with & without batch norm.
 - early stopping. pick the best one, 
   
+
+
+## 17th of May
+
+first thing you should do:
+- implement early stopping, and plot the graph.
+
+
+
+> how do I implement early stopping?
+
+
+
+> how do I plot the graph?
+
+- you would just need one graph. So.. just print out the result, parse it and plot it.
+- maybe use a callback to...plot the graph?
+
+
+> How do I do early stopping with other architectures?
+- use that pytorch framework, that does exactly just that.
+  - https://github.com/ncullen93/torchsample
+    - this one has too much errors.
+- it might be better off to use pytorch lightning.
+  - https://www.pytorchlightning.ai
+  
