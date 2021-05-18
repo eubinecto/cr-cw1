@@ -38,6 +38,7 @@ def main():
                         default=1e-3)
     parser.add_argument("--patience", type=int,
                         default=3)
+    # TODO: just make 1 or 0. That's easier.
     parser.add_argument('--normalise_data',
                         dest='normalise_data',
                         default=False,
@@ -81,6 +82,11 @@ def main():
     if normalise_data:
         # The output of torchvision datasets are PILImage images of range [0, 1].
         # We transform them to Tensors of normalized range [-1, 1].
+        # TODO: why would you do it this way? you could just subtract the mean from all the values?
+        # ah... I know why. if you do so, it would be hard to parallelize the process. (I know this from my experience).
+        # so.. this quasi-zero-centering is more simple and parallelize-friendly.
+        # note: this is not min-max scaling, though. min max scaling is [any, any] -> [0, 1]. There is a formula for
+        # this: https://wotres.tistory.com/entry/min-max-scaling-하는-방법-in-python
         pipeline = [
             transforms.ToTensor(),  # transform PILImage to pytorch tensors
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # normalise the values
