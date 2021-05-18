@@ -37,7 +37,7 @@ def main():
     parser.add_argument("--lr", type=float,
                         default=1e-3)
     parser.add_argument("--patience", type=int,
-                        default=5)
+                        default=3)
     parser.add_argument('--normalise_data',
                         dest='normalise_data',
                         default=True,

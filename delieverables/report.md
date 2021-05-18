@@ -74,7 +74,7 @@ processing and coding requirements)
 architecture above. 
 - implemented with pytorch, as the author was more familiar with pytorch than with Keras.(answers the coding requirements.)
 - it is composed of: conv layer, max pooling layer, batch norm layer and drop out layer. (what they ar)
-
+- we use adam optimiser. the learning rate gradually decreases.\ 
 
 **Experiments done**. 
 - optimising epochs
