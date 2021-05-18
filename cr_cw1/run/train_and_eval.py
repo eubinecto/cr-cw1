@@ -40,7 +40,7 @@ def main():
                         default=3)
     parser.add_argument('--normalise_data',
                         dest='normalise_data',
-                        default=True,
+                        default=False,
                         action='store_true')
 
     # --- get the hyper parameters --- #
