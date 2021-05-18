@@ -115,7 +115,7 @@ def main():
         min_delta=0.00,
         patience=patience,
         verbose=True,  # so that I can plot the trend.
-        mode='max'
+        mode='min'  # look for the minimum.
     )
 
     # --- logger setup --- #

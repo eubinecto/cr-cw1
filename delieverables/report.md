@@ -4,8 +4,6 @@
 
 ## Introduction
 
-A clear introductory to the problem and the methodology to be used, with justification of the network topology and hyperparameters chosen (3)
-
 What are we doing here?
 - CIFAR dataset
 - with a CNN
@@ -15,15 +13,8 @@ What are we doing here?
   - with & without batch norm & dropout. 
 - justification - summarize them here. (judging from the results... of course.)
 - Pytorch is used instead of Keras as the author is more familiar with Pytorch than Tensorflow.
----
 
 ## Literature review (8)
-
-Contextualisation and state of the art in robotics and deep learning (marks given for
-clarity/completeness of the overview of the state of the art, with spectrum of deep learning
-methods considered in robotics; critical analysis of the deep learning role in robotics; quality
-of the references cited)
-
 
 > the spectrum of deep learning methods considered
 
@@ -40,18 +31,16 @@ Reasoning, Embodiment and Learning (Sunderhauf et al., 2018).
 
 and.. what is the invariant of all the examples above?
 
-> Now, why is deep learning widely used then?; what's the role of deep learning in cognitive robotics? (overview)
 
-**That is because... (...)**
+**That is because... (the reason for deep learning being widely used...)**
 - explain: essentially the "pros" of deep learning approach in cognitive robotics.
 - (Pierson et al, 2017) "every part of a complex system can be made to learn." -> "connect parts of all of these structures together
     to form a full system that learns throughout". -> "when each part is capable of learning, the system
     as a whole can adapt in sophisticated ways."
+- here, you essentially talk about the **pros** of deep learning in cognitive robotics.  
 - and then... unanimously says... anything else? That's what I want to see here.
 - examples?
 
-
-> critical analysis: What's the pro's and con's of applying deep learning to cognitive robotics?
 
 **But applying deep learning does come with limits (the biggest shortcoming - large amount of data, but hard to obtain them), which could nevertheless be mitigated by ...()**.
 - cons
@@ -64,13 +53,10 @@ and.. what is the invariant of all the examples above?
     - e.g. Mariolis et al.
     - e.g. Kappler et al.
 
-> verdict: where will this lead to?
 
-**A mixture of rule-based approach & deep learning approach seems to be a viable path in cognitive robotics.**
+**A mixture of rule-based approach & deep learning approach seems to be the viable future of cognitive robotics.**
 - reason: "there is a spectrum, rather than a dichotomy" (Sunderhauf et al., 2018).
-- example?: 
-
----
+- example?:
 
 ## Methods (7)
 
@@ -79,47 +65,23 @@ Complexity of the network(s), hyperparameters and dataset (marks given for compl
 and appropriateness of the network topology; hyperparameter exploration approach; data
 processing and coding requirements)
 
-> The network structure?
 
-```python
-class RegThreeCNN(ThreeCNN):
-    def __init__(self, lr: float):
-        super(RegThreeCNN, self).__init__(lr)
-        # input channel 3 = the R, G and B channels.
-        # change this with a sequential layer.
-        self.layer_1 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.BatchNorm2d(32),  # batch norm layer
-            torch.nn.ReLU(inplace=True),  # non-linear activation
-            torch.nn.MaxPool2d(kernel_size=2, stride=2),
-            torch.nn.Dropout2d(p=0.05)  # drop out layer
-        )  # sequentially define the layer.
-        self.layer_2 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
-            nn.BatchNorm2d(32),  # batch norm layer
-            torch.nn.ReLU(inplace=True),  # non-linear activation
-            torch.nn.MaxPool2d(kernel_size=2, stride=2),
-            torch.nn.Dropout2d(p=0.05) # dropout layer
-        )  # sequentially define the layer.
-        self.layer_3 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
-            nn.BatchNorm2d(32),  # batch norm layer
-            torch.nn.ReLU(inplace=True),  # non-linear activation
-            torch.nn.MaxPool2d(kernel_size=2, stride=2),
-            torch.nn.Dropout2d(p=0.05)  # dropout layer
-        )  # sequentially define the layer.
-        self.fc_1 = nn.Linear(in_features=32 * 2 * 2, out_features=10)  # should match.
-```
-> The architecture of `RegThreeCNN`. It is  a CNN with three convolution layers
-    and one fully connected layer. Each convolution layer is regularised with batch norm and dropout layers.
+![The architecture of the final CNN network. It is a CNN with three convolution layers
+    and one fully connected layer at the end=. Each convolution layer is regularised with batch norm and dropout layers.](.report_images/a193ff20.png){width=300px}
+
 
 **The architecture of the network.** After a series of hyper parameter explorations, we ended up with the 
 architecture above. 
-- implemented with pytorch.
+- implemented with pytorch, as the author was more familiar with pytorch than with Keras.(answers the coding requirements.)
 - it is composed of: conv layer, max pooling layer, batch norm layer and drop out layer. (what they ar)
 
-**Exploration of hyper parameters**. 
-- 
+
+**Experiments done**. 
+- optimising epochs
+- data normalised / unnormalised.
+- optimising the number of convolution layers
+- regularising the network with Batch norm and Dropout layers.
+
 
 ## Results & Discussions
 
@@ -141,10 +103,21 @@ lost if report longer than the required maximum of 5 pages.
 
 early stopping - we could do this.. right? Just do this by hand... and as for the other parts..
 - cite early stopping? (Hands-on ML with tensorflow)
+- this technique is applied to the rest of the experiments.
+- I need to plot it.... with excel. Yeah, that should be alright.
+
+### Experiment 2:
+
+model | features unnormalised | features normalised
+--- | --- | ---
+BaseCNN | 61.29%  | 63.12%
+
+Table: The testing accuracies of the BaseCNN model with unnormalised features and normalised features.
 
 
+- but why does normalisation work?
 
-### Experiment 2: optimising the number of convolution layers
+### Experiment 3: optimising the number of convolution layers
 
 
 model | training accuracy | testing accuracy    
@@ -161,7 +134,7 @@ Table: epoch = determined with early stopping (one=3, two=). .
 
 
 
-### Experiment 3: regularising the network
+### Experiment 4: regularising the network
 
 
 model |training accuracy | testing accuracy 
