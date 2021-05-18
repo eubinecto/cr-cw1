@@ -38,6 +38,11 @@ def main():
                         default=1e-3)
     parser.add_argument("--patience", type=int,
                         default=5)
+    parser.add_argument('--normalise_data',
+                        type=bool,
+                        dest='normalise_data',
+                        default=True,
+                        action='store_true')
 
     # --- get the hyper parameters --- #
     args = parser.parse_args()
@@ -46,6 +51,7 @@ def main():
     model_name: str = args.model_name
     lr: float = args.lr
     patience: int = args.patience
+    normalise_data: bool = args.normalise_data
 
     # --- instantiate the model --- #
     if model_name == "base_cnn":
@@ -72,14 +78,21 @@ def main():
     # --- gpu set up --- #
     print("is cuda available?:", torch.cuda.is_available())
 
-    # --- load the data --- #
-    # The output of torchvision datasets are PILImage images of range [0, 1].
-    # We transform them to Tensors of normalized range [-1, 1].
-    transform = transforms.Compose([
+    # --- normalise or not --- #
+    if normalise_data:
+        # The output of torchvision datasets are PILImage images of range [0, 1].
+        # We transform them to Tensors of normalized range [-1, 1].
+        pipeline = [
             transforms.ToTensor(),  # transform PILImage to pytorch tensors
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # normalise the values
-         ]
-    )
+        ]
+    else:
+        pipeline = [
+            transforms.ToTensor()
+        ]
+
+    # --- load the data --- #
+    transform = transforms.Compose(pipeline)
     train_set = torchvision.datasets.CIFAR10(root=CIFAR10_DIR, train=True,
                                              download=False, transform=transform)
     test_set = torchvision.datasets.CIFAR10(root=CIFAR10_DIR, train=False,
@@ -123,10 +136,9 @@ def main():
                 train_dataloader=train_loader,
                 val_dataloaders=val_loader)
 
-    # --- evaluate the accuracy of the model --- #
+    # --- evaluate the training & testing accuracies of the model --- #
     train_acc = eval_acc(model, train_loader)
     test_acc = eval_acc(model, test_loader)
-
     print('Accuracy of the network on the train images:', train_acc)
     print('Accuracy of the network on the test images:', test_acc)
 

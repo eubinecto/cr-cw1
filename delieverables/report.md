@@ -28,7 +28,7 @@ of the references cited)
 > the spectrum of deep learning methods considered
 
 
-![Current challenges for deep learning in robotics vision (Adapted from: (Sunderhauf et al. , 2018))](.report_images/0f2e0f09.png)
+![Current challenges for deep learning in robotics vision (Adapted from: (Sunderhauf et al. , 2018))](.report_images/0f2e0f09.png){width=150px}
 
 **Deep learning (e.g. the CNN above) is widely used to tackle challenges in cognitive robotics**. As illustrated
 in **Figure 1** above, the deep-learning-applicable challenges of robotic vision can be categorized into three conceptual axes:
@@ -74,34 +74,67 @@ and.. what is the invariant of all the examples above?
 
 ## Methods (7)
 
+
 Complexity of the network(s), hyperparameters and dataset (marks given for complexity
 and appropriateness of the network topology; hyperparameter exploration approach; data
 processing and coding requirements)
 
-### The Final network structure
+> The network structure?
+
+```python
+class RegThreeCNN(ThreeCNN):
+    def __init__(self, lr: float):
+        super(RegThreeCNN, self).__init__(lr)
+        # input channel 3 = the R, G and B channels.
+        # change this with a sequential layer.
+        self.layer_1 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
+            torch.nn.BatchNorm2d(32),  # batch norm layer
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            torch.nn.Dropout2d(p=0.05)  # drop out layer
+        )  # sequentially define the layer.
+        self.layer_2 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
+            nn.BatchNorm2d(32),  # batch norm layer
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            torch.nn.Dropout2d(p=0.05) # dropout layer
+        )  # sequentially define the layer.
+        self.layer_3 = nn.Sequential(
+            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
+            nn.BatchNorm2d(32),  # batch norm layer
+            torch.nn.ReLU(inplace=True),  # non-linear activation
+            torch.nn.MaxPool2d(kernel_size=2, stride=2),
+            torch.nn.Dropout2d(p=0.05)  # dropout layer
+        )  # sequentially define the layer.
+        self.fc_1 = nn.Linear(in_features=32 * 2 * 2, out_features=10)  # should match.
+```
+> The architecture of `RegThreeCNN`. It is  a CNN with three convolution layers
+    and one fully connected layer. Each convolution layer is regularised with batch norm and dropout layers.
+
+**The architecture of the network.** After a series of hyper parameter explorations, we ended up with the 
+architecture above. 
+- implemented with pytorch.
+- it is composed of: conv layer, max pooling layer, batch norm layer and drop out layer. (what they ar)
+
+**Exploration of hyper parameters**. 
+- 
+
+## Results & Discussions
 
 
-
-### 
-
-> just state the
-
-
-## Description  (12)
-
-- justification goes here.
-
-
-Description, interpretation and assessment of the results on the hyperparameter testing
+**Description**, **interpretation** and assessment of the results on the hyperparameter testing
 simulations, including appropriate figures and tables to support the results (marks given for
 the clarity of the reporting of the simulations done and the results presented via
 text/tables/charts; Depth of the interpretation and assessment of the quality of the results;
 Discussion of alternative/future simulations to complement the results obtained); Marks
 lost if report longer than the required maximum of 5 pages.
 
-> Include a discussion - how could you improve upon what you currently have?
 
-### optimising epochs
+
+
+### Experiment 1: optimising epochs with early stopping
 
 
 (a figure showing when epoch should be stopped.)
@@ -110,14 +143,15 @@ early stopping - we could do this.. right? Just do this by hand... and as for th
 - cite early stopping? (Hands-on ML with tensorflow)
 
 
-### optimising the number of convolution layers
+
+### Experiment 2: optimising the number of convolution layers
 
 
-model | testing accuracy | final training loss (cross entropy)  
+model | training accuracy | testing accuracy    
 --- | --- | --- | --- 
-BaseCNN | 62% | 0.795 
-TwoCNN |  66% | 0.866
-ThreeCNN | 65% | 0.966
+BaseCNN | 74.45% | 63.12% 
+TwoCNN |  71.80% | **66.99%**
+ThreeCNN | 66.76% | 63.82%
 
 
 Table: epoch = determined with early stopping (one=3, two=). . 
@@ -127,24 +161,32 @@ Table: epoch = determined with early stopping (one=3, two=). .
 
 
 
-### Regularizing the models with batch-norm and dropout layers.
+### Experiment 3: regularising the network
 
 
-
-RegBaseCNN | RegTwoCNN | RegThreeCNN
-
-model | testing accuracy | final training loss (c)
-
+model |training accuracy | testing accuracy 
 --- | --- | ---
-60% | 67% | 
+RegBaseCNN | 73.32% | 61.08%
+RegTwoCNN | 72.60% | 67.33%
+RegThreeCNN | 71.97% | **68.08%**
 
-**We regularise the model by inserting batch norm and drop out layers to each conv layer.**
-- cite batch norm:
-- cite dropout: 
 
-**We optimise the 
+**Adding Batch Normalization layers and Dropout layers to the 
+
+
+### Discussion
+
+
+> How could you improve upon what you currently have?
+
+
+- vgg
+- resnet
+- or, even use Transformers. (VIT)
 
 ---
+
+
 
 
 ## References

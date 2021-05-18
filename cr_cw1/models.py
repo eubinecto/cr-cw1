@@ -166,17 +166,22 @@ class ThreeCNN(CNN):
         # input channel 3 = the R, G and B channels.
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=3,
+                            out_channels=32,
+                            kernel_size=(3, 3)),  # 2d convolution
             torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_2 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=32,
+                            out_channels=32,
+                            kernel_size=(3, 3)),  # 2d convolution
             torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
         self.layer_3 = nn.Sequential(
-            torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
+            torch.nn.Conv2d(in_channels=32,
+                            out_channels=32, kernel_size=(3, 3)),
             torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2)
         )  # sequentially define the layer.
@@ -197,9 +202,9 @@ class ThreeCNN(CNN):
 
 class RegThreeCNN(ThreeCNN):
     """
-    the baseline CNN.
-    Just a single Conv2d layer.
-    One fully connected layer.
+    the CNN with three convolution layers
+    and one fully connected layer. Each convolution
+    layer is regularised with batch norm and dropout layers.
     """
     def __init__(self, lr: float):
         super(RegThreeCNN, self).__init__(lr)
@@ -207,23 +212,23 @@ class RegThreeCNN(ThreeCNN):
         # change this with a sequential layer.
         self.layer_1 = nn.Sequential(
             torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3, 3)),
-            torch.nn.BatchNorm2d(32),
+            torch.nn.BatchNorm2d(32),  # batch norm layer
             torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2),
-            torch.nn.Dropout2d(p=0.05)
+            torch.nn.Dropout2d(p=0.05)  # drop out layer
         )  # sequentially define the layer.
         self.layer_2 = nn.Sequential(
             torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
-            nn.BatchNorm2d(32),
+            nn.BatchNorm2d(32),  # batch norm layer
             torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2),
-            torch.nn.Dropout2d(p=0.05)
+            torch.nn.Dropout2d(p=0.05) # dropout layer
         )  # sequentially define the layer.
         self.layer_3 = nn.Sequential(
             torch.nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3)),
-            nn.BatchNorm2d(32),
+            nn.BatchNorm2d(32),  # batch norm layer
             torch.nn.ReLU(inplace=True),  # non-linear activation
             torch.nn.MaxPool2d(kernel_size=2, stride=2),
-            torch.nn.Dropout2d(p=0.05)
+            torch.nn.Dropout2d(p=0.05)  # dropout layer
         )  # sequentially define the layer.
         self.fc_1 = nn.Linear(in_features=32 * 2 * 2, out_features=10)  # should match.
