@@ -39,7 +39,6 @@ def main():
     parser.add_argument("--patience", type=int,
                         default=5)
     parser.add_argument('--normalise_data',
-                        type=bool,
                         dest='normalise_data',
                         default=True,
                         action='store_true')
