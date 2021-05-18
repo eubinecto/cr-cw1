@@ -1,8 +1,7 @@
-# Coursework on Deep Learning and Robotics
+# Coursework on Deep Learning and Robotics (COMP34212)
 - author: Eu-Bin KIM (10327741)
 
-
-## Introduction
+## 1. Introduction
 
 What are we doing here?
 - CIFAR dataset
@@ -14,22 +13,21 @@ What are we doing here?
 - justification - summarize them here. (judging from the results... of course.)
 - Pytorch is used instead of Keras as the author is more familiar with Pytorch than Tensorflow.
 
-## Literature review (8)
-
-> the spectrum of deep learning methods considered
-
+## 2. Literature review
 
 ![Current challenges for deep learning in robotics vision (Adapted from: (Sunderhauf et al. , 2018))](.report_images/0f2e0f09.png){width=150px}
 
-**Deep learning (e.g. the CNN above) is widely used to tackle challenges in cognitive robotics**. As illustrated
-in **Figure 1** above, the deep-learning-applicable challenges of robotic vision can be categorized into three conceptual axes:
-Reasoning, Embodiment and Learning (Sunderhauf et al., 2018).
+**Deep learning is widely used to tackle reasoning, embodiment and learning process of cognitive robotics**. As illustrated
+in **Figure 1** above, the deep-learning-applicable challenges of robotic vision can be categorized (Sunderhauf et al., 2018) into three conceptual axes:
+Reasoning, Embodiment and Learning.
 - any examples?: do state any concrete examples.
   - 1. one example from Reasoning: 
   - 2. one example from Embodiment:
   - 3. one example from Learning:
-
+  
 and.. what is the invariant of all the examples above?
+- all of those axes: they are all about .... "connecting parts", maybe?
+
 
 
 **That is because... (the reason for deep learning being widely used...)**
@@ -58,7 +56,7 @@ and.. what is the invariant of all the examples above?
 - reason: "there is a spectrum, rather than a dichotomy" (Sunderhauf et al., 2018).
 - example?:
 
-## Methods (7)
+## 3. Methods
 
 
 Complexity of the network(s), hyperparameters and dataset (marks given for complexity
@@ -70,84 +68,77 @@ processing and coding requirements)
     and one fully connected layer at the end=. Each convolution layer is regularised with batch norm and dropout layers.](.report_images/a193ff20.png){width=300px}
 
 
-**The architecture of the network.** After a series of hyper parameter explorations, we ended up with the 
-architecture above. 
+**The architecture of the network.** After a series of hyper parameter explorations, we ended up with a 
+CNN of the architecture above. 
 - implemented with pytorch, as the author was more familiar with pytorch than with Keras.(answers the coding requirements.)
 - it is composed of: conv layer, max pooling layer, batch norm layer and drop out layer. (what they ar)
 - we use adam optimiser. the learning rate gradually decreases.\ 
 
 **Experiments done**. 
 - optimising epochs
+- on Cifar10 dataset.  
 - data normalised / unnormalised.
 - optimising the number of convolution layers
 - regularising the network with Batch norm and Dropout layers.
 
 
-## Results & Discussions
+## 4. Results & Discussions
+### 4.1.  Experiment 1: Optimising epochs with early stopping
 
-
-**Description**, **interpretation** and assessment of the results on the hyperparameter testing
-simulations, including appropriate figures and tables to support the results (marks given for
-the clarity of the reporting of the simulations done and the results presented via
-text/tables/charts; Depth of the interpretation and assessment of the quality of the results;
-Discussion of alternative/future simulations to complement the results obtained); Marks
-lost if report longer than the required maximum of 5 pages.
-
-
-
-
-### Experiment 1: optimising epochs with early stopping
-
-
-(a figure showing when epoch should be stopped.)
+![The training loss and validation loss of BaseCNN over 7 epoch. The plot is generated with Excel.](.report_images/0b4ae5fb.png){width=300px}
 
 early stopping - we could do this.. right? Just do this by hand... and as for the other parts..
 - cite early stopping? (Hands-on ML with tensorflow)
 - this technique is applied to the rest of the experiments.
 - I need to plot it.... with excel. Yeah, that should be alright.
 
-### Experiment 2:
+### 4.2. Experiment 2: Normalising the features
 
-model | features unnormalised | features normalised
---- | --- | ---
-BaseCNN | 61.29%  | 63.12%
+model | features unnormalised | features normalised | epoch
+--- | --- | --- | ---
+BaseCNN | 61.29%  | 63.12% | 4
 
-Table: The testing accuracies of the BaseCNN model with unnormalised features and normalised features.
+Table: The testing accuracies of the BaseCNN model with unnormalised features and normalised features. The number of
+epoch is optimised for the model with Early Stopping.
+
+**Normalising the feature values result in an increase in accuracy**.
+- why? 
+- evidence?: the table above.
+
+### 4.3. Experiment 3: Optimising the number of convolution layers
 
 
-- but why does normalisation work?
-
-### Experiment 3: optimising the number of convolution layers
-
-
-model | training accuracy | testing accuracy    
+model | training accuracy | testing accuracy | epoch   
 --- | --- | --- | --- 
-BaseCNN | 74.45% | 63.12% 
-TwoCNN |  71.80% | **66.99%**
-ThreeCNN | 66.76% | 63.82%
+BaseCNN | 75.94% | 62.12% | 4
+TwoCNN |  74.42% | **67.36%** | 8
+ThreeCNN | 72.02% | 66.41% | 8
+
+Table: The training and testing accuracies of the CNN's with different numbers of convolution layers.
+The number of epochs for each model is optimised with Early Stopping.
+
+**Adding more convolution layers does not always result in an increase in accuracy.**
+- why? Adding unne
+- BaseCNN has 1 convolution layer, TwoCNN has two, and ThreeCNN has three.  
+- We see this from the table above.
 
 
-Table: epoch = determined with early stopping (one=3, two=). . 
-
-**CNN with two convolution layers seem to be **
-- but why? : Two CNN ended with the final training loss of 
+### 4.4. Experiment 4: Regularising the network
 
 
-
-### Experiment 4: regularising the network
-
-
-model |training accuracy | testing accuracy 
+model |training accuracy | testing accuracy | epoch
 --- | --- | ---
-RegBaseCNN | 73.32% | 61.08%
-RegTwoCNN | 72.60% | 67.33%
-RegThreeCNN | 71.97% | **68.08%**
+RegBaseCNN | 71.155% | 59.73% | 3
+RegTwoCNN | 76.6625% | 69.3% | 9 
+RegThreeCNN | 78.78% | **71.2%** | 17
 
+Table: The training and testing accuracies of the regularised CNN's.  The number of epoch for each model
+is optimised with Early Stopping.
 
-**Adding Batch Normalization layers and Dropout layers to the 
+**Adding Batch Normalization layers and Dropout layers to the** 
+- They are regularised with  Bath norm and Dropout layers added to each convolutional layer.
 
-
-### Discussion
+### 4.5. Discussion
 
 
 > How could you improve upon what you currently have?
@@ -157,12 +148,8 @@ RegThreeCNN | 71.97% | **68.08%**
 - resnet
 - or, even use Transformers. (VIT)
 
----
 
-
-
-
-## References
+## 5. References
 
 - Pierson et al., 2017.
 - Sunderhauf et al., 2017
